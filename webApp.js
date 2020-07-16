@@ -6,6 +6,8 @@ import router from './router.js'
 let app = express();
 let storage = new AsyncLocalStorage();
 
+global.kResourceStore = storage.kResourceStore;
+
 app.use(async (req, res, next) => {
     await storage.run(new Map(), () => {
         let uid = uuid.v4();
