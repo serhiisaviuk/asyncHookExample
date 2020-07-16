@@ -1,18 +1,16 @@
 import express from 'express';
-import {AsyncLocalStorage, executionAsyncId} from 'async_hooks';
+import {storage} from './storage.js'
 import * as uuid from 'uuid';
 import router from './router.js'
 
 let app = express();
-let storage = new AsyncLocalStorage();
 
 global.kResourceStore = storage.kResourceStore;
 
-app.use(async (req, res, next) => {
-    await storage.run(new Map(), () => {
+app.use((req, res, next) => {
+    storage.run(new Map(), () => {
         let uid = uuid.v4();
         storage.getStore().set("requestId", uid);
-        console.log('Master:', uid, "executionAsyncId:", executionAsyncId());
         next();
     })
 });
